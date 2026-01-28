@@ -10,12 +10,15 @@ namespace EcommerceIdentityCMS.Core.Entities
     public class ApplicationUser : IdentityUser<int>
     {
         public string FullName { get; set; }
-
+        public string Avatar {get; set; } = string.Empty;
         // 1:1 - Mỗi nhân viên thuộc biên chế tại một địa điểm duy nhất
         public int WorkplaceId { get; set; }
+        // Thêm cột trạng thái hoạt động
+        public bool IsActive { get; set; } = true;
+        public bool IsDepartmentHead { get; set; } = false; // Quyền Trưởng phòng (dùng cho Tổng công ty)
         public virtual Workplace Workplace { get; set; }
+        public ICollection<UserDepartment> UserDepartments { get; set; }
+       = new List<UserDepartment>();
 
-        // Logic Đa nhiệm: Identity mặc định hỗ trợ n:n giữa User và Role (Department)
-        // Chúng ta sẽ dùng bảng mặc định AspNetUserRoles nhưng hiểu là UserDepartments
     }
 }

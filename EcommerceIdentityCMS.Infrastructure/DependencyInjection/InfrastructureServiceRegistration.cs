@@ -1,5 +1,7 @@
-﻿using EcommerceIdentityCMS.Core.Models.Settings;
+﻿using EcommerceIdentityCMS.Core.Entities;
+using EcommerceIdentityCMS.Core.Models.Settings;
 using EcommerceIdentityCMS.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +21,21 @@ namespace EcommerceIdentityCMS.Infrastructure.DependencyInjection
 
             services.AddDbContext<EcommerceIdentityCMSContext>(options =>
                options.UseSqlServer(ConnectionStrings.EcommerceIdentityCMS, oracleOptions => { oracleOptions.CommandTimeout(60); }));
-
+            // 1. Cấu hình IdentityCore cho ApplicationUser
+            services.AddDataProtection();
+            services.AddIdentityCore<ApplicationUser>(options => {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
+            // 2. PHẢI CÓ: Đăng ký kiểu Role tùy chỉnh (ApplicationDepartment)
+            .AddRoles<ApplicationDepartment>()
+            // 3. PHẢI CÓ: Kết nối với DbContext
+            .AddEntityFrameworkStores<EcommerceIdentityCMSContext>()
+            // 4. Đăng ký các dịch vụ cần thiết cho Token (nếu dùng)
+            .AddDefaultTokenProviders();
 
             return services;
         }

@@ -15,12 +15,12 @@ namespace EcommerceIdentityCMS.Core.Entities
         // Thêm cột Code để dùng trong logic lập trình
         public DepartmentCode DeptCode { get; set; }
 
-
-        public virtual ICollection<UserDepartment> UserDepartments { get; set; }
         // Quan hệ n:n với Nơi làm việc
         public virtual ICollection<WorkplaceDepartment> WorkplaceDepartments { get; set; }
 
         // Liên kết với bảng phân quyền CRUD
         public virtual ICollection<DepartmentPermission> Permissions { get; set; }
+
+        public ICollection<UserDepartment> UserDepartments { get; set; }
     }
 }

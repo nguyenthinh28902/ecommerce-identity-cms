@@ -1,4 +1,5 @@
 ﻿using EcommerceIdentityCMS.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,15 @@ using System.Threading.Tasks;
 
 namespace EcommerceIdentityCMS.Infrastructure.Data
 {
-    public class EcommerceIdentityCMSContext : IdentityDbContext<ApplicationUser, ApplicationDepartment, int>
+    public class EcommerceIdentityCMSContext : IdentityDbContext<
+    ApplicationUser,
+    ApplicationDepartment,
+    int,
+    IdentityUserClaim<int>,
+    UserDepartment,
+    IdentityUserLogin<int>,
+    IdentityRoleClaim<int>,
+    IdentityUserToken<int>>
     {
         public EcommerceIdentityCMSContext(DbContextOptions<EcommerceIdentityCMSContext> options) : base(options) { }
 
@@ -17,7 +26,6 @@ namespace EcommerceIdentityCMS.Infrastructure.Data
         public DbSet<Workplace> Workplaces { get; set; }
         public DbSet<DepartmentPermission> DepartmentPermissions { get; set; }
         public DbSet<WorkplaceDepartment> WorkplaceDepartments { get; set; }
-        public DbSet<UserDepartment> UserDepartments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -26,10 +34,7 @@ namespace EcommerceIdentityCMS.Infrastructure.Data
             builder.Entity<ApplicationUser>(b => b.ToTable("Users"));
             builder.Entity<ApplicationDepartment>(b => b.ToTable("Departments")); // Role nay là Department
 
-            // Đổi tên bảng trung gian Đa nhiệm (User - Role) thành UserDepartments
-            builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserRole<int>>(b => {
-                b.ToTable("UserDepartments");
-            });
+            
 
             // 2. Cấu hình bảng trung gian Workplace - Department (n:n)
             // Một địa điểm có nhiều phòng ban và một loại phòng ban có ở nhiều nơi
@@ -66,6 +71,22 @@ namespace EcommerceIdentityCMS.Infrastructure.Data
              builder.Entity<Workplace>()
                     .Property(w => w.Type)
                     .HasConversion<string>();
+            });
+            builder.Entity<UserDepartment>(entity =>
+            {
+                entity.HasKey(x => new { x.UserId, x.RoleId });
+
+                entity.HasOne(x => x.User)
+                      .WithMany(u => u.UserDepartments)
+                      .HasForeignKey(x => x.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Department)
+                      .WithMany(r => r.UserDepartments)
+                      .HasForeignKey(x => x.RoleId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+
             });
         }
     }

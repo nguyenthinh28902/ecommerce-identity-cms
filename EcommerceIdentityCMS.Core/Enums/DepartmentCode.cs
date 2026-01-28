@@ -13,6 +13,7 @@ namespace EcommerceIdentityCMS.Core.Enums
         Business = 3,          // Kinh doanh
         Accountant = 4,        // Kế toán
         Warehouse = 5,         // Quản trị Kho bãi
-        Logistics = 6          // Điều vận & Cung ứng
+        Logistics = 6,         // Điều vận & Cung ứng
+        Content = 7            // nội dung website
     }
 }
