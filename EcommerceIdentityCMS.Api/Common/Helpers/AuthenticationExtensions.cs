@@ -1,0 +1,50 @@
+﻿using EcommerceIdentityCMS.Core.Models.Settings;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+
+namespace EcommerceIdentityCMS.Api.Common.Helpers
+{
+    public static class AuthenticationExtensions
+    {
+        public static IServiceCollection AddAuthenticationExtensions(this IServiceCollection services, IConfiguration configuration)
+        {
+            var _internalAuth = configuration
+           .GetSection("InternalAuth")
+           .Get<InternalAuth>()
+           ?? throw new InvalidOperationException("JwtSettings missing");
+            services.AddAuthentication("Bearer")
+               .AddJwtBearer("Bearer", options =>
+               {
+                   options.Authority = _internalAuth.Issuer;
+                   options.RequireHttpsMetadata = false;
+
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidIssuer = _internalAuth.Issuer,
+
+                       ValidateAudience = true,
+                       ValidAudience = _internalAuth.Audience,
+
+                       ValidateLifetime = true,
+                       ClockSkew = TimeSpan.Zero,
+
+                       ValidateIssuerSigningKey = true,
+
+                       NameClaimType = JwtRegisteredClaimNames.Sub,
+                       RoleClaimType = "role",
+                   };
+               });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("user.read", policy =>
+                                    policy.RequireClaim("scope", "user.read"));
+                options.AddPolicy("user.write", policy =>
+                                    policy.RequireClaim("scope", "user.write"));
+                options.AddPolicy("user.internal", policy =>
+                                    policy.RequireClaim("scope", "user.internal"));
+            });
+            return services;
+        }
+    }
+}
