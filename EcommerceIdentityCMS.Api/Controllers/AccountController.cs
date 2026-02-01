@@ -1,6 +1,5 @@
 ﻿using EcommerceIdentityCMS.Application.Sercivces.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcommerceIdentityCMS.Api.Controllers

@@ -7,11 +7,6 @@ using EcommerceIdentityCMS.Core.Exceptions;
 using EcommerceIdentityCMS.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
 {
@@ -37,10 +32,11 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
                           .Where(u => u.Id == userId)
                           .ProjectTo<UserInforDto>(_mapper.ConfigurationProvider)
                           .FirstOrDefaultAsync();
-            if (userInfo == null) {
+            if (userInfo == null)
+            {
                 throw new UnauthorizedException("Tài khoản không tồn tại hoặc đã bị xóa.");
             }
-            
+
             var result = Result<UserInforDto>.Success(userInfo, $"Thông tin nhân sự {userInfo.FullName}");
 
             return result;

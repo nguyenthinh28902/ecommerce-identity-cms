@@ -1,4 +1,6 @@
-﻿using EcommerceIdentityCMS.Core.Models.Settings;
+﻿using EcommerceIdentityCMS.Api.Common.Requirement;
+using EcommerceIdentityCMS.Core.Models.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -18,8 +20,7 @@ namespace EcommerceIdentityCMS.Api.Common.Helpers
                    options.Authority = _internalAuth.Issuer;
                    options.RequireHttpsMetadata = false;
 
-                   options.TokenValidationParameters = new TokenValidationParameters
-                   {
+                   options.TokenValidationParameters = new TokenValidationParameters {
                        ValidateIssuer = true,
                        ValidIssuer = _internalAuth.Issuer,
 
@@ -35,14 +36,16 @@ namespace EcommerceIdentityCMS.Api.Common.Helpers
                        RoleClaimType = "role",
                    };
                });
+            services.AddSingleton<IAuthorizationHandler, InternalOrPermissionHandler>();
             services.AddAuthorization(options =>
             {
+                // Policy cho quyền Xem
                 options.AddPolicy("user.read", policy =>
-                                    policy.RequireClaim("scope", "user.read"));
+                    policy.AddRequirements(new InternalOrPermissionRequirement("user.read")));
+
+                // Policy cho quyền Ghi
                 options.AddPolicy("user.write", policy =>
-                                    policy.RequireClaim("scope", "user.write"));
-                options.AddPolicy("user.internal", policy =>
-                                    policy.RequireClaim("scope", "user.internal"));
+                    policy.AddRequirements(new InternalOrPermissionRequirement("user.write")));
             });
             return services;
         }

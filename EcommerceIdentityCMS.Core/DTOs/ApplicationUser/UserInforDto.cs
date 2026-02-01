@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EcommerceIdentityCMS.Core.DTOs.ApplicationUser
+﻿namespace EcommerceIdentityCMS.Core.DTOs.ApplicationUser
 {
     public class UserInforDto
     {
@@ -13,6 +7,7 @@ namespace EcommerceIdentityCMS.Core.DTOs.ApplicationUser
         public string Avatar { get; set; }
         public string FullName { get; set; }
         public string DepartmentName { get; set; }
+        public List<string> DeptCodes { get; set; }
         public string WorkplaceName { get; set; }
     }
 }

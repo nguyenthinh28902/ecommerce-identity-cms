@@ -1,61 +1,41 @@
 ﻿using EcommerceIdentityCMS.Application.Sercivces.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
 {
+
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<CurrentUserService> _logger;
 
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor, ILogger<CurrentUserService> logger)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
         }
+
+        private HttpContext? HttpContext => _httpContextAccessor.HttpContext;
 
         public int UserId
         {
             get
             {
-                var user = _httpContextAccessor.HttpContext?.User;
-
-                // Kiểm tra cả 'sub' (chuẩn JWT) và 'NameIdentifier' (chuẩn .NET)
-                var value = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                _logger.LogInformation(user?.FindFirst(ClaimTypes.Role)?.Value);
-                _logger.LogInformation(user?.FindFirst("wid")?.Value);
-                _logger.LogInformation(user?.FindFirst(ClaimTypes.Email)?.Value);
+                // Đọc từ Header do Gateway truyền xuống
+                var value = HttpContext?.Request.Headers["X-User-Id"].ToString();
                 return int.TryParse(value, out var userId) ? userId : 0;
             }
         }
 
-        public string? Email
-        {
-            get
-            {
-                var user = _httpContextAccessor.HttpContext?.User;
-                // Kiểm tra cả 'sub' (chuẩn JWT) và 'NameIdentifier' (chuẩn .NET)
-                var value = user?.FindFirst(JwtRegisteredClaimNames.Email)?.Value;          
-                return value ?? string.Empty;
-            }
-        }
+        // Email có thể không có trong Header trừ khi bạn bổ sung ở Gateway
+        public string? Email => HttpContext?.Request.Headers["X-User-Email"].ToString() ?? string.Empty;
 
         public string? Role
         {
             get
             {
-                var user = _httpContextAccessor.HttpContext?.User;
-                // Kiểm tra cả 'sub' (chuẩn JWT) và 'NameIdentifier' (chuẩn .NET)
-                var value = user?.FindFirst(ClaimTypes.Role)?.Value;
-                return value ?? string.Empty;
+                // Đọc từ Header X-User-Roles (chuỗi cách nhau bằng dấu phẩy)
+                // Lấy role đầu tiên hoặc xử lý tùy logic của bạn
+                var roles = HttpContext?.Request.Headers["X-User-Roles"].ToString();
+                return roles?.Split(',').FirstOrDefault() ?? string.Empty;
             }
         }
 
@@ -63,14 +43,16 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
         {
             get
             {
-                var user = _httpContextAccessor.HttpContext?.User;
-
-                // Kiểm tra cả 'sub' (chuẩn JWT) và 'NameIdentifier' (chuẩn .NET)
-                var value = user?.FindFirst("wid")?.Value;
-                          
-
-                return int.TryParse(value, out var userId) ? userId : 0;
+                // Đọc từ Header X-User-WorkplaceId
+                var value = HttpContext?.Request.Headers["X-User-WorkplaceId"].ToString();
+                return int.TryParse(value, out var wid) ? wid : 0;
             }
         }
+
+        // Thêm hàm này nếu bạn muốn lấy toàn bộ danh sách Roles
+        public List<string> Roles =>
+            HttpContext?.Request.Headers["X-User-Roles"].ToString()
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .ToList() ?? new List<string>();
     }
 }
