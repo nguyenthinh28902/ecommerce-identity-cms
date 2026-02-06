@@ -1,4 +1,5 @@
 ﻿using EcommerceIdentityCMS.Application.Sercivces.Interfaces;
+using EcommerceIdentityCMS.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,11 +7,11 @@ namespace EcommerceIdentityCMS.Api.Controllers
 {
     [Route("api/tai-khoan")]
     [ApiController]
-    [Authorize(Policy = "user.read")]
+    [Authorize(PolicyNames.UserRead)]
     public class AccountController : ControllerBase
     {
-        private readonly IUserSevice _userSevice;
-        public AccountController(IUserSevice userSevice)
+        private readonly IUserService _userSevice;
+        public AccountController(IUserService userSevice)
         {
             _userSevice = userSevice;
         }

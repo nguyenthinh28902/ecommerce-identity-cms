@@ -48,12 +48,12 @@ namespace EcommerceIdentityCMS.Api.Middlewares
 
             var response = new
             {
-                StatusCode = context.Response.StatusCode,
-                Message = exception.Message,
-                Detail = statusCode == HttpStatusCode.InternalServerError ? "Vui lòng liên hệ quản trị viên." : null
+                isSuccess = false,
+                statusCode = (int)statusCode,
+                error = exception.Message,
             };
-
-            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            return context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
         }
     }
 }

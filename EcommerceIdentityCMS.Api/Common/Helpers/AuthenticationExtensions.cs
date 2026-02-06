@@ -1,8 +1,8 @@
 ﻿using EcommerceIdentityCMS.Api.Common.Requirement;
+using EcommerceIdentityCMS.Core.Enums;
 using EcommerceIdentityCMS.Core.Models.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace EcommerceIdentityCMS.Api.Common.Helpers
 {
@@ -17,35 +17,49 @@ namespace EcommerceIdentityCMS.Api.Common.Helpers
             services.AddAuthentication("Bearer")
                .AddJwtBearer("Bearer", options =>
                {
+                   // URL của IdentityServer - Dùng để tự động tải Metadata và Public Key
                    options.Authority = _internalAuth.Issuer;
+
+                   // Chỉ để false khi đang ở môi trường Dev/Local không có SSL thật
                    options.RequireHttpsMetadata = false;
 
                    options.TokenValidationParameters = new TokenValidationParameters {
+                       // Kiểm tra tính hợp lệ của Issuer (Người cấp phát)
                        ValidateIssuer = true,
                        ValidIssuer = _internalAuth.Issuer,
 
+                       // Kiểm tra Audience (Mã định danh của API này)
                        ValidateAudience = true,
                        ValidAudience = _internalAuth.Audience,
 
-                       ValidateLifetime = true,
-                       ClockSkew = TimeSpan.Zero,
+                       // Kiểm tra thời hạn Token
+                       ValidateLifetime = false,
+                       // Độ trễ cho phép khi kiểm tra thời gian (Khuyên dùng 5-30s)
+                       ClockSkew = TimeSpan.FromSeconds(20),
 
+                       // BẮT BUỘC: Kiểm tra chữ ký của Token
                        ValidateIssuerSigningKey = true,
-
-                       NameClaimType = JwtRegisteredClaimNames.Sub,
-                       RoleClaimType = "role",
+                       // Lưu ý: Vì đã có options.Authority ở trên, thư viện sẽ tự động 
+                       // lấy Signing Key từ IdentityServer, ný không cần gán thủ công ở đây.
                    };
                });
             services.AddSingleton<IAuthorizationHandler, InternalOrPermissionHandler>();
             services.AddAuthorization(options =>
             {
-                // Policy cho quyền Xem
-                options.AddPolicy("user.read", policy =>
+                // Tất cả các Policy đều dùng chung Requirement, chỉ khác tham số Permission
+                options.AddPolicy(PolicyNames.UserRead, policy =>
                     policy.AddRequirements(new InternalOrPermissionRequirement("user.read")));
-
-                // Policy cho quyền Ghi
-                options.AddPolicy("user.write", policy =>
+                options.AddPolicy(PolicyNames.UserWrite, policy =>
                     policy.AddRequirements(new InternalOrPermissionRequirement("user.write")));
+                // Nếu bạn vẫn muốn một Policy chỉ dành riêng cho internal (ví dụ các hàm admin hệ thống)
+                options.AddPolicy(PolicyNames.Internal, policy =>
+                {
+                    policy.AddRequirements(new InternalOrPermissionRequirement("user.internal"));
+                    policy.AddRequirements(new InternalOrPermissionRequirement("user.write"));
+                    policy.AddRequirements(new InternalOrPermissionRequirement("user.read"));
+                }
+
+                 );
             });
             return services;
         }

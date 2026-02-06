@@ -7,7 +7,6 @@ using System.IdentityModel.Tokens.Jwt;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -15,12 +14,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGenConfiguration(builder.Configuration);
 //add DI 
-builder.Services.AddAuthenticationExtensions(builder.Configuration);
 builder.Services.AddApplicationDI(builder.Configuration);
 
 
 //tránh ánh xạ token
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+builder.Services.AddAuthenticationExtensions(builder.Configuration);
+
+builder.Services.AddServiceDI(builder.Configuration);
 var app = builder.Build();
 
 // Đặt ở đây để bắt được lỗi của mọi Middleware phía sau
@@ -31,11 +32,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options => options.DisplayRequestDuration());
 }
-
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 await app.Services.SeedDatabaseAsync();

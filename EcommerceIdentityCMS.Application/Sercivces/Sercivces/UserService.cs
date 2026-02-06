@@ -10,12 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
 {
-    public class UserSevice : IUserSevice
+    public class UserService : IUserService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
-        public UserSevice(UserManager<ApplicationUser> userManager,
+        public UserService(UserManager<ApplicationUser> userManager,
             ICurrentUserService currentUserService,
             IMapper mapper)
         {
