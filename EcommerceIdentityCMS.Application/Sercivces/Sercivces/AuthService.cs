@@ -5,9 +5,6 @@ using EcommerceIdentityCMS.Core.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-// Để dùng .Include() và .ThenInclude()
-using System.Linq; // Để dùng các hàm mở rộng của IQueryable
-
 namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
 {
     public class AuthService : IAuthService
@@ -51,12 +48,23 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
 
                 var function = p.FunctionCode.ToLowerInvariant();
 
-                if (p.CanRead)
-                    scopes.Add($"{function}.read");
-
-                if (p.CanCreate || p.CanUpdate || p.CanDelete)
-                    scopes.Add($"{function}.write");
-
+                switch (p)
+                {
+                    case { CanRead: true }:
+                        scopes.Add($"{function}.read");
+                        break;
+                    case { CanCreate: true }:
+                        scopes.Add($"{function}.create");
+                        break;
+                    case { CanUpdate: true }:
+                        scopes.Add($"{function}.update");
+                        break;
+                    case { CanDelete: true }:
+                        scopes.Add($"{function}.delete");
+                        break;
+                    default:
+                        break;
+                }
             }
 
             return scopes.ToList();

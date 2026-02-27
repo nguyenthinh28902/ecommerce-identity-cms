@@ -1,4 +1,5 @@
 ﻿using EcommerceIdentityCMS.Application.DependencyInjection;
+using EcommerceIdentityCMS.Infrastructure.DependencyInjection;
 
 namespace EcommerceIdentityCMS.Api.DependencyInjection
 {
@@ -8,7 +9,8 @@ namespace EcommerceIdentityCMS.Api.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration)
         {
-
+            // khai báo Infrastructure (EcomProductDbContext)
+            services.AddInfrastructureServices(configuration);
             services.AddApplicationServices(configuration);
 
             return services;

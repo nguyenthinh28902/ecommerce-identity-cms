@@ -9,14 +9,14 @@ namespace EcommerceIdentityCMS.Core.Models
     public class Result<T>
     {
         public bool IsSuccess { get; }
-        public string? Error { get; }
+        public string? Noti { get; }
         public T? Data { get; }
 
         protected Result(bool isSuccess, T? data, string? error)
         {
             IsSuccess = isSuccess;
             Data = data;
-            Error = error;
+            Noti = error;
         }
         public static Result<T> Success(T data, string mess)
        => new(true, data, mess);

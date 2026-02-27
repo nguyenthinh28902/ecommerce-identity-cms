@@ -1,5 +1,6 @@
 ﻿using EcommerceIdentityCMS.Api.Common.Requirement;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace EcommerceIdentityCMS.Api.Common.Helpers
 {
@@ -7,19 +8,15 @@ namespace EcommerceIdentityCMS.Api.Common.Helpers
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, InternalOrPermissionRequirement requirement)
         {
-            // 1. Kiểm tra nếu có Scope "user.internal" -> Đây là System Token (người nhà)
-            // Cho phép truy cập TẤT CẢ các API có gắn InternalOrPermissionRequirement
-            if (context.User.HasClaim(c => c.Type == "scope" && c.Value == "user.internal"))
-            {
-                context.Succeed(requirement);
-                return Task.CompletedTask;
-            }
+            // Kiểm tra nếu Token có claim 'client_id' nhưng KHÔNG có 'sub' (User ID)
+            // Đây là dấu hiệu của Client Credentials Flow (System-to-System)
+            var isSystemToken = context.User.HasClaim(c => c.Type == "client_id")
+                                && !context.User.HasClaim(c => c.Type == ClaimTypes.NameIdentifier);
 
-            // 2. Nếu không phải hệ thống, kiểm tra quyền (Permission) của User (User Token)
-            // Giả sử quyền của user được lưu trong Claim tên là "permission" hoặc "scope" tương ứng
-            var userPermissions = context.User.FindAll(c => c.Type == "scope").Select(c => c.Value);
+            // Kiểm tra quyền cụ thể được truyền vào policy (ví dụ: user.internal)
+            var hasPermission = context.User.HasClaim(c => c.Value == requirement.RequiredPermission);
 
-            if (userPermissions.Contains(requirement.RequiredPermission))
+            if (isSystemToken || hasPermission)
             {
                 context.Succeed(requirement);
             }

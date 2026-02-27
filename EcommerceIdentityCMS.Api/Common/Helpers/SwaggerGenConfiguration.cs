@@ -13,20 +13,18 @@ namespace EcommerceIdentityCMS.Api.Common.Helpers
             //thêm cấu hình Swagger Auth (Bearer JWT)
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new()
-                {
+                c.SwaggerDoc("v1", new() {
                     Title = "Customer Identity API",
                     Version = "v1"
                 });
 
                 // 🔐 JWT Bearer config
-                c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
                     Name = "Authorization",
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+                    Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
                     BearerFormat = "JWT",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    In = ParameterLocation.Header,
                     Description = "Nhập token dạng: Bearer {your JWT token}"
                 });
 
