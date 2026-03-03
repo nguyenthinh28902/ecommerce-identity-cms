@@ -10,5 +10,6 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Interfaces
     public interface IAuthService
     {
         public Task<SignInResponseDto?> ValidateUserAsync(SignInRequestDto signInRequestDto);
+        public Task<SignInResponseDto?> GetSignInResponseDto();
     }
 }

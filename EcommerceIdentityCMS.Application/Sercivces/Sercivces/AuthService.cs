@@ -11,12 +11,14 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationDepartment> _roleManager;
-
+        private readonly ICurrentUserService _currentUserService;
         public AuthService(UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationDepartment> roleManager)
+            RoleManager<ApplicationDepartment> roleManager,
+            ICurrentUserService currentUserService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _currentUserService = currentUserService;
         }
 
         public async Task<SignInResponseDto?> ValidateUserAsync(SignInRequestDto signInRequestDto)
@@ -27,15 +29,33 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
             if (user != null && await _userManager.CheckPasswordAsync(user, signInRequestDto.Password))
             {
                 if(!user.IsActive) throw new UnauthorizedException("Tài khoản không hoạt động");
-                var userDepartments = user.UserDepartments.Select(x => x.Department.DeptCode.ToString()).ToList();
-                var departmentPermissions = user.UserDepartments.SelectMany(x => x.Department.Permissions).ToList();
-                var scopes = BuildScopes(departmentPermissions);
-                var workplaceId = user.WorkplaceId;
-
-                return new SignInResponseDto { Id = user.Id, Email = user.Email ?? string.Empty, Roles = userDepartments, WorkplaceId = workplaceId, Scopes = scopes };
+                var signInResponseDto = await GetSignInResponseDto(user);
+                return signInResponseDto;
             }
             return null;
         }
+
+        public async Task<SignInResponseDto?> GetSignInResponseDto()
+        {
+            var userId = _currentUserService.UserId;
+            var user = await _userManager.Users.AsNoTracking().Include(x => x.Workplace)
+              .Include(x => x.UserDepartments).ThenInclude(x => x.Department).ThenInclude(x => x.Permissions)
+              .FirstOrDefaultAsync(x => x.Id == userId);
+            if (user == null) return null;
+            var signInResponseDto = await GetSignInResponseDto(user);
+            return signInResponseDto;
+        }
+
+        private async Task<SignInResponseDto?> GetSignInResponseDto(ApplicationUser user)
+        {
+            var userDepartments = user.UserDepartments.Select(x => x.Department.DeptCode.ToString()).ToList();
+            var departmentPermissions = user.UserDepartments.SelectMany(x => x.Department.Permissions).ToList();
+            var scopes = BuildScopes(departmentPermissions);
+            var workplaceId = user.WorkplaceId;
+
+            return new SignInResponseDto { Id = user.Id, Email = user.Email ?? string.Empty, Roles = userDepartments, WorkplaceId = workplaceId, Scopes = scopes };
+        }
+
 
         private List<string> BuildScopes(IEnumerable<DepartmentPermission> departmentPermissions)
         {

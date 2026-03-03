@@ -22,5 +22,13 @@ namespace EcommerceIdentityCMS.Api.Controllers
             return Ok(result); // Chỉ trả về Id và Email
         }
 
+        [HttpGet("thong-tin-xac-thuc-nhan-su")]
+        public async Task<IActionResult> GetAuthInfor()
+        {
+            var result = await _authService.GetSignInResponseDto();
+            if (result == null) return Unauthorized();
+            return Ok(result); // Chỉ trả về Id và Email
+        }
+
     }
 }
