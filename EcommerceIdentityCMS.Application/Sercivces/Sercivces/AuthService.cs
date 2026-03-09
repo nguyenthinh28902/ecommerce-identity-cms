@@ -52,8 +52,9 @@ namespace EcommerceIdentityCMS.Application.Sercivces.Sercivces
             var departmentPermissions = user.UserDepartments.SelectMany(x => x.Department.Permissions).ToList();
             var scopes = BuildScopes(departmentPermissions);
             var workplaceId = user.WorkplaceId;
+            var workplaceType = user.Workplace?.Type.ToString() ?? string.Empty;
 
-            return new SignInResponseDto { Id = user.Id, Email = user.Email ?? string.Empty, Roles = userDepartments, WorkplaceId = workplaceId, Scopes = scopes };
+            return new SignInResponseDto { Id = user.Id, Email = user.Email ?? string.Empty, Roles = userDepartments, WorkplaceId = workplaceId, Scopes = scopes, WorkplaceType = workplaceType };
         }
 
 

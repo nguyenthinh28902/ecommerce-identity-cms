@@ -12,6 +12,7 @@ namespace EcommerceIdentityCMS.Core.DTOs.Account
         public string Email { get; set; }
         public List<string> Roles { get; set; }
         public int WorkplaceId { get; set; }
+        public string WorkplaceType { get; set; }
         public List<string> Scopes { get; set; }
     }
 }
