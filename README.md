@@ -1,21 +1,5 @@
 ﻿# Tài liệu Phân quyền & Cấu trúc Hệ thống - Ecommerce Gemini GPT
 
-
-### Thông tin chung của dự án
-[Thông tin chung dự án](https://github.com/nguyenthinh28902/mini-project-ecommerce).
-
-### Cấu hình xác thực tại Web
-[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-cms-web).
-
-### Xác thực tại identity
-[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-identity-server-cms).
-
-### Xác thực tại Getaway 
-[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-api-gateway-cms).
-
-### Xác thực tại Service (Product servcie)
-[Xem tiếp](https://github.com/nguyenthinh28902/Ecom.ProductService).
-
 Tài liệu này tóm tắt logic phân quyền và cấu trúc thực thể đã được tùy chỉnh để đáp ứng yêu cầu vận hành đa nhiệm giữa Tổng công ty và các Chi nhánh/Kho hàng.
 
 ## 1. Hệ thống Phân quyền (Roles & Permissions)
@@ -61,3 +45,22 @@ Hệ thống sử dụng **ASP.NET Core Identity** với các tùy chỉnh để
     * **Bổ sung thuộc tính:**
         * `IsDepartmentHead` (bool): Xác định quyền Trưởng phòng.
         * `IsPrimary` (bool): Đánh dấu phòng ban chính của nhân sự khi làm việc đa nhiệm.
+
+
+
+### Thông tin chung của dự án
+[Thông tin chung dự án](https://github.com/nguyenthinh28902/mini-project-ecommerce).
+
+### Cấu hình xác thực tại Web
+[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-cms-web).
+
+### Xác thực tại identity
+[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-identity-server-cms).
+
+### Xác thực tại Getaway 
+[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-api-gateway-cms).
+
+### Xác thực tại Service (Product servcie)
+[Xem tiếp](https://github.com/nguyenthinh28902/Ecom.ProductService).
+
+
