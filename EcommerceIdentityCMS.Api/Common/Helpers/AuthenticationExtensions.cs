@@ -1,6 +1,7 @@
 ﻿using EcommerceIdentityCMS.Api.Common.Requirement;
 using EcommerceIdentityCMS.Core.Enums;
 using EcommerceIdentityCMS.Core.Models.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
@@ -41,6 +42,7 @@ namespace EcommerceIdentityCMS.Api.Common.Helpers
                        ValidateIssuerSigningKey = true,
                        // Lưu ý: Vì đã có options.Authority ở trên, thư viện sẽ tự động 
                        // lấy Signing Key từ IdentityServer, ný không cần gán thủ công ở đây.
+
                    };
                });
             services.AddSingleton<IAuthorizationHandler, InternalOrPermissionHandler>();

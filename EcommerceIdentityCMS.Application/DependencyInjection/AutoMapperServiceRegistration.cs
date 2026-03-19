@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EcommerceIdentityCMS.Application.Common.Mappings;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,10 @@ namespace EcommerceIdentityCMS.Application.DependencyInjection
     {
         public static IServiceCollection AddAutoMapperServiceRegistration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<ApplicationUserProfile>();      
+            });
             return services;
         }
     }
