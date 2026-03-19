@@ -1,7 +1,22 @@
 ﻿# Tài liệu Phân quyền & Cấu trúc Hệ thống - Ecommerce Gemini GPT
 
 Tài liệu này tóm tắt logic phân quyền và cấu trúc thực thể đã được tùy chỉnh để đáp ứng yêu cầu vận hành đa nhiệm giữa Tổng công ty và các Chi nhánh/Kho hàng.
+### 🔗 Core Security & Implementation (Liên kết kỹ thuật trọng tâm)
 
+> **Tổng quan dự án xem tại đây:** [Xem đầy đủ kiến trúc tại đây](https://github.com/nguyenthinh28902/mini-project-ecommerce)
+
+Để đi sâu vào các cấu hình bảo mật hệ thống, bạn có thể tham khảo trực tiếp tại các module sau:
+
+* **Client Security:** Triển khai OIDC Middleware, quản lý Secure Cookie và luồng Challenge.
+  * [Cấu hình tại Web CMS](https://github.com/nguyenthinh28902/ecommerce-cms-web)
+* **Identity Provider:** Định nghĩa Resource, Scope và Custom Profile Service để mapping Claims.
+  * [Cấu hình tại Identity Server](https://github.com/nguyenthinh28902/ecommerce-identity-server-cms)
+* **API Gateway (YARP):** Quản lý Reverse Proxy Routing và thiết lập Auth Policy tập trung.
+  * [Cấu hình tại Gateway CMS](https://github.com/nguyenthinh28902/ecommerce-api-gateway-cms)
+* **Resource Server:** Cấu hình JWT Bearer và phân quyền dựa trên Policy (Policy-based Authorization).
+  * [Cấu hình tại Product Service](https://github.com/nguyenthinh28902/Ecom.ProductService)
+
+---
 ## 1. Hệ thống Phân quyền (Roles & Permissions)
 
 Hệ thống được thiết kế theo mô hình phân cấp dựa trên địa điểm làm việc (`Workplace`) và phòng ban (`Department`).
@@ -38,22 +53,5 @@ Hệ thống sử dụng **ASP.NET Core Identity** với các tùy chỉnh để
     * **Bổ sung thuộc tính:**
         * `IsDepartmentHead` (bool): Xác định quyền Trưởng phòng.
         * `IsPrimary` (bool): Đánh dấu phòng ban chính của nhân sự khi làm việc đa nhiệm.
-
-
-
-### Thông tin chung của dự án
-[Thông tin chung dự án](https://github.com/nguyenthinh28902/mini-project-ecommerce).
-
-### Cấu hình xác thực tại Web
-[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-cms-web).
-
-### Xác thực tại identity
-[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-identity-server-cms).
-
-### Xác thực tại Getaway 
-[Xem tiếp](https://github.com/nguyenthinh28902/ecommerce-api-gateway-cms).
-
-### Xác thực tại Service (Product servcie)
-[Xem tiếp](https://github.com/nguyenthinh28902/Ecom.ProductService).
 
 
