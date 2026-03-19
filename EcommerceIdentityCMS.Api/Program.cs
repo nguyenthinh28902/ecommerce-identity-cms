@@ -34,7 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();
-
+app.UseAuthentication(); // Phải có dòng này và nằm trên UseAuthorization
+app.UseAuthorization();
 
 app.MapControllers();
 await app.Services.SeedDatabaseAsync();
