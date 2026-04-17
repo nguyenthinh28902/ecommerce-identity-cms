@@ -39,6 +39,8 @@ Dựa trên mô hình vận hành thực tế, các thực thể được ràng 
 | **Nơi làm việc - Phòng ban** | **n : n** | Một địa điểm có nhiều phòng ban hoạt động và một loại phòng ban có mặt ở nhiều nơi khác nhau. |
 | **Phòng ban - Chức năng** | **1 : CRUD** | Phòng ban định nghĩa quyền hạn cụ thể (Thêm, Xem, Sửa, Xóa) trên từng module chức năng của hệ thống. |
 
+### 1.3. Sơ đồ thực thể (Entity Relationship Diagram)
+![Cấu trúc Phân quyền & Thực thể](https://github.com/nguyenthinh28902/mini-project-ecommerce/blob/main/images/authorization-structure.png)
 ---
 
 ## 2. Cấu trúc Kỹ thuật (Identity & Persistence)
